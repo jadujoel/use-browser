@@ -35,7 +35,7 @@
 		// Recommended Options
 		"strict": true,
 		"target": "esnext",
-		"types": ["bun", "vitest/globals"],
+		"types": ["bun"],
 		"verbatimModuleSyntax": true
 	},
 	"include": ["src/**/*.ts", "e2e/**/*.ts", "*.ts"]
