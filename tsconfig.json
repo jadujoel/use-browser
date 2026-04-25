@@ -1,0 +1,42 @@
+{
+	// Visit https://aka.ms/tsconfig to read more about this file
+	"compilerOptions": {
+		"declaration": true,
+		"declarationMap": true,
+		"exactOptionalPropertyTypes": true,
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+
+		// Environment Settings
+		// See also https://aka.ms/tsconfig/module
+		"module": "esnext",
+		"moduleDetection": "force",
+		"moduleResolution": "bundler",
+
+		// Stricter Typechecking Options
+		"noUncheckedIndexedAccess": true,
+		"noUncheckedSideEffectImports": true,
+		"outDir": "./dist",
+		// File Layout
+		"rootDir": ".",
+		"skipLibCheck": true,
+
+		// Other Outputs
+		"sourceMap": true,
+
+		// Style Options
+		// "noImplicitReturns": true,
+		// "noImplicitOverride": true,
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		// "noFallthroughCasesInSwitch": true,
+		// "noPropertyAccessFromIndexSignature": true,
+
+		// Recommended Options
+		"strict": true,
+		"target": "esnext",
+		"types": ["bun", "vitest/globals"],
+		"verbatimModuleSyntax": true
+	},
+	"include": ["src/**/*.ts", "e2e/**/*.ts", "*.ts"]
+}
