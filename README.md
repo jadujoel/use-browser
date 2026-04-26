@@ -1,4 +1,4 @@
-# @jadujoel/bun-browser-test
+# use-browser
 
 Run `bun:test` files inside a real headless browser by adding a single directive to the top of the file.
 
@@ -7,7 +7,7 @@ Run `bun:test` files inside a real headless browser by adding a single directive
 ### 1. Install
 
 ```sh
-bun install @jadujoel/bun-browser-test
+bun install use-browser
 ```
 
 ### 2. Add the preload to `bunfig.toml`
@@ -16,7 +16,7 @@ Create (or update) `bunfig.toml` at the root of your project:
 
 ```toml
 [test]
-preload = ["@jadujoel/bun-browser-test/preload"]
+preload = ["use-browser/preload"]
 ```
 
 This registers a `Bun.plugin` hook that rewrites any test file starting with `"use browser"` so it runs in a `Bun.WebView` (WebKit on macOS, Chromium elsewhere). Files without the directive are untouched and run on the host as usual.
