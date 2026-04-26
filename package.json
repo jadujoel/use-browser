@@ -1,7 +1,11 @@
 {
-  "name": "@jadujoel/bun-browser-test",
+  "name": "use-browser",
   "module": "index.ts",
   "type": "module",
+  "version": "0.0.1",
+  "publishConfig": {
+
+  },
   "scripts": {
     "test": "bun test",
     "typecheck": "tsc --noEmit",
