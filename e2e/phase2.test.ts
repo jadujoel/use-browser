@@ -73,4 +73,29 @@ describe("phase 2 — bundling pipeline", () => {
     },
     TEST_TIMEOUT_MS,
   );
+
+  test(
+    "done-callback.fixture: tests/hooks taking a `done` arg block until done() is called",
+    async () => {
+      const { results } = await runUserFile({
+        userFile: fixturePath("done-callback.fixture.ts"),
+      });
+
+      expect(results).toHaveLength(3);
+      const byName = new Map(results.map((r) => [r.name, r]));
+
+      const waits = byName.get("waits for done() before resolving the test");
+      expect(waits?.ok).toBe(true);
+      // The test takes ~20ms because of the setTimeout — proves we waited.
+      expect(waits?.durationMs ?? 0).toBeGreaterThanOrEqual(15);
+
+      const failure = byName.get("done(err) reports a failure");
+      expect(failure?.ok).toBe(false);
+      expect(failure?.error?.message).toBe("intentional async failure");
+
+      const hooksRan = byName.get("hooks fired in order around this test");
+      expect(hooksRan?.ok).toBe(true);
+    },
+    TEST_TIMEOUT_MS,
+  );
 });

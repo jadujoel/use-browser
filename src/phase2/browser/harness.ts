@@ -1,8 +1,63 @@
 import type { TestResult } from "../types";
 import { serializeError } from "./serialize-error";
 
-export type TestFn = () => void | Promise<void>;
-export type HookFn = () => void | Promise<void>;
+export type DoneCallback = (err?: unknown) => void;
+export type TestFn =
+  | (() => void | Promise<void>)
+  | ((done: DoneCallback) => void | Promise<void>);
+export type HookFn =
+  | (() => void | Promise<void>)
+  | ((done: DoneCallback) => void | Promise<void>);
+
+/**
+ * Run a test or hook function, supporting both Promise-style and `done`-callback
+ * style. We pick the style based on the function's declared arity (matching
+ * Bun/Jest/Mocha): if the function takes a parameter, it's done-style.
+ *
+ * If a done-style fn also returns a Promise, the Promise is observed only for
+ * rejections (we still wait for `done()`).
+ */
+const runStep = (fn: TestFn | HookFn): Promise<void> =>
+  new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const finish = (err?: unknown): void => {
+      if (settled) return;
+      settled = true;
+      if (err === undefined || err === null) {
+        resolve();
+      } else if (err instanceof Error) {
+        reject(err);
+      } else {
+        reject(new Error(String(err)));
+      }
+    };
+
+    if (fn.length >= 1) {
+      let result: unknown;
+      try {
+        result = (fn as (done: DoneCallback) => unknown)(finish);
+      } catch (err) {
+        finish(err);
+        return;
+      }
+      if (result instanceof Promise) {
+        // Observe rejections only — done() is the source of truth for completion.
+        (result as Promise<unknown>).then(undefined, finish);
+      }
+      return;
+    }
+
+    try {
+      const result = (fn as () => unknown)();
+      if (result instanceof Promise) {
+        (result as Promise<unknown>).then(() => finish(), finish);
+      } else {
+        finish();
+      }
+    } catch (err) {
+      finish(err);
+    }
+  });
 
 interface SuiteOptions {
   readonly name: string;
@@ -59,7 +114,7 @@ const fullName = (test: Test): string => {
 
 const DEFAULT_TIMEOUT_MS = 5_000;
 
-const runWithTimeout = async (fn: () => Promise<void>, timeoutMs: number): Promise<void> => {
+const runWithTimeout = async (work: Promise<void>, timeoutMs: number): Promise<void> => {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(
@@ -68,7 +123,7 @@ const runWithTimeout = async (fn: () => Promise<void>, timeoutMs: number): Promi
     );
   });
   try {
-    await Promise.race([fn(), timeout]);
+    await Promise.race([work, timeout]);
   } finally {
     if (timer !== undefined) clearTimeout(timer);
   }
@@ -139,7 +194,7 @@ export class Harness {
     let beforeAllError: unknown;
     for (const hook of suite.beforeAllHooks) {
       try {
-        await hook();
+        await runStep(hook);
       } catch (err) {
         beforeAllError = err;
         break;
@@ -170,7 +225,7 @@ export class Harness {
     }
 
     for (const hook of suite.afterAllHooks) {
-      try { await hook(); } catch { /* swallowed: afterAll failures don't have an obvious test owner in v1 */ }
+      try { await runStep(hook); } catch { /* swallowed: afterAll failures don't have an obvious test owner in v1 */ }
     }
   }
 
@@ -186,14 +241,14 @@ export class Harness {
 
     let error: unknown;
     try {
-      for (const hook of beforeEach) await hook();
-      await runWithTimeout(async () => { await test.fn(); }, timeoutMs);
+      for (const hook of beforeEach) await runStep(hook);
+      await runWithTimeout(runStep(test.fn), timeoutMs);
     } catch (err) {
       error = err;
     }
 
     for (const hook of afterEach) {
-      try { await hook(); } catch (err) {
+      try { await runStep(hook); } catch (err) {
         if (error === undefined) error = err;
       }
     }

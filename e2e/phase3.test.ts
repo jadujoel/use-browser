@@ -2,11 +2,6 @@ import { describe, expect, test } from "bun:test";
 
 const TEST_TIMEOUT_MS = 60_000;
 
-const PRELOAD_PATH = new URL(
-  "../src/phase3/preload.ts",
-  import.meta.url,
-).pathname;
-
 const fixturePath = (name: string): string =>
   new URL(`./fixtures/phase3/${name}`, import.meta.url).pathname;
 
@@ -18,8 +13,11 @@ interface SpawnResult {
 }
 
 const runBunTest = async (fixture: string): Promise<SpawnResult> => {
+  // The preload is auto-loaded from bunfig.toml — the spawned `bun test`
+  // inherits cwd and reads the same config, so we don't pass --preload
+  // here (doing so would register the plugin twice).
   const proc = Bun.spawn({
-    cmd: ["bun", "test", "--preload", PRELOAD_PATH, fixturePath(fixture)],
+    cmd: ["bun", "test", fixturePath(fixture)],
     stdout: "pipe",
     stderr: "pipe",
   });

@@ -2,13 +2,16 @@
   "name": "@jadujoel/bun-browser-test",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "example": "bun test example/"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@biomejs/biome": "2.4.13"
   },
   "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@biomejs/biome": "2.4.13"
+    "typescript": "^6"
   }
 }
