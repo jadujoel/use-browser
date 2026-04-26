@@ -2,9 +2,13 @@
   "name": "use-browser",
   "module": "index.ts",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "publishConfig": {
-
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "url": "https://github.com/jadujoel/use-browser"
   },
   "scripts": {
     "test": "bun test",
