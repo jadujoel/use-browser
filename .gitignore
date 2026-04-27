@@ -17,3 +17,5 @@ research
 workspaces/**/dist
 workspaces/**/public
 workspaces/**/node_modules
+test-results
+temp

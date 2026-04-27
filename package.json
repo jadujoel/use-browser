@@ -1,24 +1,24 @@
 {
-  "name": "use-browser",
-  "module": "index.ts",
-  "type": "module",
-  "version": "0.0.5",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "url": "https://github.com/jadujoel/use-browser"
-  },
-  "scripts": {
-    "test": "bun test",
-    "typecheck": "tsc --noEmit",
-    "example": "bun test example/"
-  },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@biomejs/biome": "2.4.13"
-  },
-  "peerDependencies": {
-    "typescript": "^6"
-  }
+	"name": "use-browser",
+	"module": "index.ts",
+	"type": "module",
+	"version": "0.0.5",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"url": "https://github.com/jadujoel/use-browser"
+	},
+	"scripts": {
+		"test": "bun test",
+		"typecheck": "tsc --noEmit",
+		"example": "bun test example/"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@biomejs/biome": "2.4.13"
+	},
+	"peerDependencies": {
+		"typescript": "^6"
+	}
 }

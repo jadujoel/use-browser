@@ -19,6 +19,10 @@
 		"outDir": "./dist",
 		// File Layout
 		"rootDir": ".",
+		"baseUrl": ".",
+		"paths": {
+			"use-browser/context": ["./src/phase5/browser/context.ts"]
+		},
 		"skipLibCheck": true,
 
 		// Other Outputs

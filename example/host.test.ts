@@ -4,6 +4,6 @@
 import { expect, test } from "bun:test";
 
 test("runs in Bun (no DOM)", () => {
-  expect(typeof globalThis.document).toBe("undefined");
-  expect(typeof Bun).toBe("object");
+	expect(typeof globalThis.document).toBe("undefined");
+	expect(typeof Bun).toBe("object");
 });

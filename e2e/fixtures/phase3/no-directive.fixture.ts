@@ -4,5 +4,5 @@
 import { expect, test } from "bun:test";
 
 test("runs in host", () => {
-  expect(typeof globalThis.document).toBe("undefined");
+	expect(typeof globalThis.document).toBe("undefined");
 });
