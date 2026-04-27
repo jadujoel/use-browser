@@ -20,7 +20,7 @@
 		// File Layout
 		"rootDir": ".",
 		"paths": {
-			"use-browser/context": ["./src/phase5/browser/context.ts"]
+			"use-browser/context": ["./src/browser/context.ts"]
 		},
 		"skipLibCheck": true,
 

@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { rm } from "node:fs/promises";
-import { WebViewDriver } from "../src/phase4/driver";
-import { resultToError } from "../src/phase4/replay";
-import { runUserFileWithDriver } from "../src/phase4/runner";
+import { WebViewDriver } from "../src/driver";
+import { resultToError } from "../src/replay";
+import { runUserFileWithDriver } from "../src/runner";
 
 const TEST_TIMEOUT_MS = 60_000;
 

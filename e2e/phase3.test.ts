@@ -47,9 +47,7 @@ describe("phase 3 — directive routing", () => {
 
 describe("phase 3 — directive parser unit checks", () => {
 	test("recognizes the directive", async () => {
-		const { hasUseBrowserDirective } = await import(
-			"../src/phase3/detect-directive"
-		);
+		const { hasUseBrowserDirective } = await import("../src/detect-directive");
 		expect(hasUseBrowserDirective(`"use browser";\nconst x = 1;`)).toBe(true);
 		expect(hasUseBrowserDirective(`'use browser';`)).toBe(true);
 		expect(hasUseBrowserDirective(`// leading comment\n"use browser";`)).toBe(
@@ -63,9 +61,7 @@ describe("phase 3 — directive parser unit checks", () => {
 	});
 
 	test("rejects when not at top", async () => {
-		const { hasUseBrowserDirective } = await import(
-			"../src/phase3/detect-directive"
-		);
+		const { hasUseBrowserDirective } = await import("../src/detect-directive");
 		expect(hasUseBrowserDirective(`const x = 1;\n"use browser";`)).toBe(false);
 		expect(hasUseBrowserDirective(`"use strict";\n"use browser";`)).toBe(false);
 		expect(hasUseBrowserDirective(``)).toBe(false);

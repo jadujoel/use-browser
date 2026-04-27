@@ -32,8 +32,7 @@ const resolveConsoleDepth = (override: number | undefined): number => {
 const RUNTIME_ENTRY = new URL("./browser/runtime-entry.ts", import.meta.url)
 	.pathname;
 const SHIM_PATH = new URL("./browser/shim.ts", import.meta.url).pathname;
-const CONTEXT_PATH = new URL("../phase5/browser/context.ts", import.meta.url)
-	.pathname;
+const CONTEXT_PATH = new URL("./browser/context.ts", import.meta.url).pathname;
 
 /**
  * Bundle a user test file together with the `bun:test` shim and runtime entry.

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { runUserFile } from "../src/phase2/runner";
+import { runUserFile } from "../src/bundle-runner";
 
 const TEST_TIMEOUT_MS = 30_000;
 

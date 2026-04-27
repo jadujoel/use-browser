@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mock } from "../src/phase5/browser/mock";
+import { mock } from "../src/browser/mock";
 
 const TEST_TIMEOUT_MS = 60_000;
 

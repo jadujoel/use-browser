@@ -2,6 +2,10 @@ export interface SerializedError {
 	readonly name: string;
 	readonly message: string;
 	readonly stack?: string;
+	readonly cause?: SerializedError;
+	readonly matcherName?: string;
+	readonly actualPreview?: string;
+	readonly expectedPreview?: string;
 }
 
 export interface TestResult {
@@ -12,3 +16,7 @@ export interface TestResult {
 }
 
 export const SENTINEL_PREFIX = "__BTR__:" as const;
+
+export interface TestResultWithMeta extends TestResult {
+	readonly screenshotPath?: string;
+}

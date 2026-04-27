@@ -19,3 +19,4 @@ workspaces/**/public
 workspaces/**/node_modules
 test-results
 temp
+.vscode

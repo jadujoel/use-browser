@@ -1,7 +1,7 @@
 import { type HookFn, harness, type TestFn } from "./harness";
 
-export { mock } from "../../phase5/browser/mock";
 export { expect } from "./expect";
+export { mock } from "./mock";
 
 export const test = (name: string, fn: TestFn, timeoutMs?: number): void => {
 	harness.addTest(name, fn, timeoutMs);

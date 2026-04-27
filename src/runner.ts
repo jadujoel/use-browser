@@ -1,11 +1,14 @@
-import { buildHtmlPage } from "../phase2/build";
-import { SENTINEL_PREFIX, type TestResult } from "../phase2/types";
+import { buildHtmlPage } from "./build";
 import {
 	type ConsoleHandler,
 	getSharedDriver,
 	type WebViewDriver,
 } from "./driver";
-import type { TestResultWithMeta } from "./types";
+import {
+	SENTINEL_PREFIX,
+	type TestResult,
+	type TestResultWithMeta,
+} from "./types";
 
 /**
  * When `BTR_FORWARD_CONSOLE=1` is set, browser-side `console.*` calls are

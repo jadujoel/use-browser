@@ -2,4 +2,4 @@
 # Auto-loads the "use browser" directive plugin so any test file can opt into
 # WebView execution by adding `"use browser";` at the top. Files without the
 # directive pass through and run on the host as usual.
-preload = ["./src/phase3/preload.ts"]
+preload = ["./src/preload.ts"]

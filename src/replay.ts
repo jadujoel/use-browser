@@ -1,5 +1,4 @@
-import type { SerializedError } from "../phase2/types";
-import type { TestResultWithMeta } from "./types";
+import type { SerializedError, TestResultWithMeta } from "./types";
 
 const rehydrate = (s: SerializedError): Error => {
 	const e = new Error(s.message);

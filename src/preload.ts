@@ -1,5 +1,5 @@
-import { wrapAsHostTest } from "../phase4/wrap-source";
 import { hasUseBrowserDirective } from "./detect-directive";
+import { wrapAsHostTest } from "./wrap-source";
 
 // Restrict to filenames that look like test files. Production users will only
 // hit `.test.` / `.spec.`; `.fixture.` is included so this package's own e2e

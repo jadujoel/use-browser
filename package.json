@@ -3,6 +3,10 @@
 	"module": "index.ts",
 	"type": "module",
 	"version": "0.0.5",
+	"exports": {
+		".": "./index.ts",
+		"./preload": "./src/preload.ts"
+	},
 	"publishConfig": {
 		"access": "public"
 	},
