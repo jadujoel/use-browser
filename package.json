@@ -2,7 +2,7 @@
 	"name": "use-browser",
 	"module": "index.ts",
 	"type": "module",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"exports": {
 		".": "./index.ts",
 		"./preload": "./src/preload.ts"
