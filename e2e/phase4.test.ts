@@ -9,6 +9,9 @@ const TEST_TIMEOUT_MS = 60_000;
 const fixturePath = (name: string): string =>
 	new URL(`./fixtures/phase3/${name}`, import.meta.url).pathname;
 
+const phase4FixturePath = (name: string): string =>
+	new URL(`./fixtures/phase4/${name}`, import.meta.url).pathname;
+
 const phase2FixturePath = (name: string): string =>
 	new URL(`./fixtures/phase2/${name}`, import.meta.url).pathname;
 
@@ -24,6 +27,24 @@ const runBunTest = async (fixture: string): Promise<SpawnResult> => {
 		cmd: ["bun", "test", fixturePath(fixture)],
 		stdout: "pipe",
 		stderr: "pipe",
+	});
+	const [stdout, stderr] = await Promise.all([
+		new Response(proc.stdout).text(),
+		new Response(proc.stderr).text(),
+	]);
+	const exitCode = await proc.exited;
+	return { stdout, stderr, combined: stdout + stderr, exitCode };
+};
+
+const runBunTestWithEnv = async (
+	absolutePath: string,
+	env: Record<string, string>,
+): Promise<SpawnResult> => {
+	const proc = Bun.spawn({
+		cmd: ["bun", "test", absolutePath],
+		stdout: "pipe",
+		stderr: "pipe",
+		env: { ...process.env, ...env },
 	});
 	const [stdout, stderr] = await Promise.all([
 		new Response(proc.stdout).text(),
@@ -76,6 +97,73 @@ describe("phase 4 — driver + reporter integration", () => {
 			expect(await screenshot.exists()).toBe(true);
 			const size = screenshot.size;
 			expect(size).toBeGreaterThan(0);
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	test(
+		"BTR_FORWARD_CONSOLE=1 pipes browser console.* to host stdout, sentinel lines filtered",
+		async () => {
+			const result = await runBunTestWithEnv(
+				phase4FixturePath("console-forward.fixture.ts"),
+				{ BTR_FORWARD_CONSOLE: "1" },
+			);
+			if (result.exitCode !== 0) {
+				throw new Error(
+					`expected exit 0, got ${result.exitCode}\n${result.combined}`,
+				);
+			}
+			expect(result.combined).toContain(
+				"BTR_FORWARD_TOP_LEVEL:hello-from-browser",
+			);
+			expect(result.combined).toContain("BTR_FORWARD_IN_TEST:value=");
+			expect(result.combined).toContain("42");
+			expect(result.combined).toContain("BTR_FORWARD_WARN:warning-line");
+			// Sentinel lines must never reach the host stdout.
+			expect(result.combined).not.toContain("__BTR__:");
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	test(
+		"without BTR_FORWARD_CONSOLE, browser console output is dropped",
+		async () => {
+			const result = await runBunTestWithEnv(
+				phase4FixturePath("console-forward.fixture.ts"),
+				{},
+			);
+			expect(result.exitCode).toBe(0);
+			expect(result.combined).not.toContain("BTR_FORWARD_TOP_LEVEL");
+			expect(result.combined).not.toContain("BTR_FORWARD_IN_TEST");
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	test(
+		"top-level throw in user file surfaces a descriptive error mentioning the original message",
+		async () => {
+			const result = await runBunTestWithEnv(
+				phase4FixturePath("top-level-throw.fixture.ts"),
+				{},
+			);
+			expect(result.exitCode).not.toBe(0);
+			expect(result.combined).toContain(
+				"BTR_TOP_LEVEL_THROW: deliberately broken fixture",
+			);
+			expect(result.combined).toContain("module evaluation");
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	test(
+		"file with no tests and no errors runs cleanly with zero reported tests",
+		async () => {
+			const result = await runBunTestWithEnv(
+				phase4FixturePath("no-tests.fixture.ts"),
+				{},
+			);
+			expect(result.exitCode).toBe(0);
+			expect(result.combined).toContain("0 fail");
 		},
 		TEST_TIMEOUT_MS,
 	);

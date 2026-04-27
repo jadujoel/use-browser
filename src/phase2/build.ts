@@ -46,6 +46,13 @@ export const buildBundle = async (
 
 /**
  * Wrap a bundle into a minimal HTML page suitable for `Bun.WebView.navigate`.
+ *
+ * The page also installs a tiny pre-bundle error trap so that any uncaught
+ * exception during module evaluation (a syntax error, a top-level throw in
+ * the user's file, etc.) is captured on `window.__btrLoadError`. The runner
+ * inspects that field after navigation to surface a useful error instead of
+ * the cryptic `window.__btrRun is not a function`.
+ *
  * @throws {Error} If `Bun.build` fails (delegated from `buildBundle`).
  */
 export const buildHtmlPage = async (
@@ -55,7 +62,29 @@ export const buildHtmlPage = async (
 	return [
 		"<!doctype html>",
 		'<html><head><meta charset="utf-8"><title>bun-browser-test phase 2</title></head>',
-		'<body><script type="module">',
+		"<body>",
+		"<script>",
+		"window.__btrLoadError = undefined;",
+		"window.addEventListener('error', function (e) {",
+		"  if (window.__btrLoadError !== undefined) return;",
+		"  var err = e && e.error;",
+		"  window.__btrLoadError = {",
+		"    message: (err && err.message) || e.message || String(e),",
+		"    stack: err && err.stack ? String(err.stack) : undefined,",
+		"    name: err && err.name ? String(err.name) : 'Error',",
+		"  };",
+		"});",
+		"window.addEventListener('unhandledrejection', function (e) {",
+		"  if (window.__btrLoadError !== undefined) return;",
+		"  var reason = e && e.reason;",
+		"  window.__btrLoadError = {",
+		"    message: (reason && reason.message) || String(reason),",
+		"    stack: reason && reason.stack ? String(reason.stack) : undefined,",
+		"    name: (reason && reason.name) || 'UnhandledRejection',",
+		"  };",
+		"});",
+		"</script>",
+		'<script type="module">',
 		bundle,
 		"</script></body></html>",
 	].join("\n");

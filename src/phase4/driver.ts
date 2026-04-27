@@ -149,6 +149,8 @@ const parseBackend = (raw: string | undefined): Backend | undefined => {
  * Tunables:
  * - `BTR_POOL_SIZE` (default `1`) — concurrent WebViews.
  * - `BTR_BACKEND` (default `webkit` on macOS, `chrome` elsewhere).
+ * - `BTR_FORWARD_CONSOLE` (default off) — when `1`, browser `console.*`
+ *   output is piped to the host process during `runUserFileWithDriver`.
  */
 export const getSharedDriver = (): WebViewDriver => {
 	if (sharedDriver === undefined) {
