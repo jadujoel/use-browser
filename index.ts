@@ -41,3 +41,7 @@ export type {
 	TestResult,
 	TestResultWithMeta,
 } from "./src/types";
+export {
+	type UseBrowserOptions,
+	useBrowser,
+} from "./src/use-browser";
