@@ -5,6 +5,30 @@ export interface BuildBundleOptions {
 	readonly userFile: string;
 }
 
+export interface BuildHtmlPageOptions extends BuildBundleOptions {
+	/**
+	 * Maximum nesting depth used when the in-browser console patch snapshots
+	 * host objects (AudioContext, DOM nodes, etc.) for forwarding to the host.
+	 * Defaults to 3 — large enough for typical Web Audio graphs without
+	 * blowing up output for deeply nested scene trees.
+	 */
+	readonly consoleDepth?: number;
+}
+
+const DEFAULT_CONSOLE_DEPTH = 3;
+
+const parseDepthEnv = (raw: string | undefined): number | undefined => {
+	if (raw === undefined) return undefined;
+	const n = Number(raw);
+	if (!Number.isFinite(n) || n < 0) return undefined;
+	return Math.floor(n);
+};
+
+const resolveConsoleDepth = (override: number | undefined): number => {
+	if (override !== undefined && override >= 0) return Math.floor(override);
+	return parseDepthEnv(process.env.BTR_CONSOLE_DEPTH) ?? DEFAULT_CONSOLE_DEPTH;
+};
+
 const RUNTIME_ENTRY = new URL("./browser/runtime-entry.ts", import.meta.url)
 	.pathname;
 const SHIM_PATH = new URL("./browser/shim.ts", import.meta.url).pathname;
@@ -56,14 +80,16 @@ export const buildBundle = async (
  * @throws {Error} If `Bun.build` fails (delegated from `buildBundle`).
  */
 export const buildHtmlPage = async (
-	options: BuildBundleOptions,
+	options: BuildHtmlPageOptions,
 ): Promise<string> => {
 	const bundle = await buildBundle(options);
+	const consoleDepth = resolveConsoleDepth(options.consoleDepth);
 	return [
 		"<!doctype html>",
 		'<html><head><meta charset="utf-8"><title>bun-browser-test phase 2</title></head>',
 		"<body>",
 		"<script>",
+		`window.__btrConsoleDepth = ${JSON.stringify(consoleDepth)};`,
 		"window.__btrLoadError = undefined;",
 		"window.addEventListener('error', function (e) {",
 		"  if (window.__btrLoadError !== undefined) return;",

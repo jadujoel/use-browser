@@ -151,6 +151,8 @@ const parseBackend = (raw: string | undefined): Backend | undefined => {
  * - `BTR_BACKEND` (default `webkit` on macOS, `chrome` elsewhere).
  * - `BTR_FORWARD_CONSOLE` (default off) — when `1`, browser `console.*`
  *   output is piped to the host process during `runUserFileWithDriver`.
+ * - `BTR_CONSOLE_DEPTH` (default `3`) — nesting depth used when serializing
+ *   host objects (AudioContext, DOM nodes, etc.) for forwarded console output.
  */
 export const getSharedDriver = (): WebViewDriver => {
 	if (sharedDriver === undefined) {
