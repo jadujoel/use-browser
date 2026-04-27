@@ -1,26 +1,6 @@
 import type { SerializedError } from "../types";
 import { AssertionError } from "./expect";
-
-const previewValue = (v: unknown): string => {
-	if (typeof v === "function") return `[Function ${v.name || "anonymous"}]`;
-	if (typeof v === "symbol") return v.toString();
-	if (typeof v === "bigint") return `${v.toString()}n`;
-	try {
-		const seen = new WeakSet();
-		return (
-			JSON.stringify(v, (_k, val) => {
-				if (typeof val === "object" && val !== null) {
-					if (seen.has(val as object)) return "[Circular]";
-					seen.add(val as object);
-				}
-				if (typeof val === "bigint") return `${val.toString()}n`;
-				return val as unknown;
-			}) ?? String(v)
-		);
-	} catch {
-		return String(v);
-	}
-};
+import { safeStringify } from "./safe-stringify";
 
 export const serializeError = (err: unknown): SerializedError => {
 	if (!(err instanceof Error)) {
@@ -46,8 +26,8 @@ export const serializeError = (err: unknown): SerializedError => {
 
 	if (err instanceof AssertionError) {
 		extras.matcherName = err.matcherName;
-		extras.actualPreview = previewValue(err.actual);
-		extras.expectedPreview = previewValue(err.expected);
+		extras.actualPreview = safeStringify(err.actual);
+		extras.expectedPreview = safeStringify(err.expected);
 	}
 
 	return { ...base, ...extras };

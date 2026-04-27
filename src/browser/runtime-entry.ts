@@ -1,3 +1,4 @@
+import { DEFAULT_CONSOLE_DEPTH } from "../constants";
 import type { TestResult } from "../types";
 import { SENTINEL_PREFIX } from "../types";
 import { harness } from "./harness";
@@ -45,7 +46,6 @@ const toLoadErrorPayload = (err: unknown): BrowserLoadErrorPayload => {
 // up to a small depth with cycle detection.
 // ---------------------------------------------------------------------------
 
-const SNAPSHOT_MAX_DEPTH_DEFAULT = 3;
 const SNAPSHOT_MAX_KEYS = 50;
 
 const resolveMaxDepth = (): number => {
@@ -57,7 +57,7 @@ const resolveMaxDepth = (): number => {
 	) {
 		return Math.floor(configured);
 	}
-	return SNAPSHOT_MAX_DEPTH_DEFAULT;
+	return DEFAULT_CONSOLE_DEPTH;
 };
 
 type Snapshot =

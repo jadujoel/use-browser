@@ -1,3 +1,5 @@
+import { USE_BROWSER_DIRECTIVE } from "./constants";
+
 const isWhitespace = (c: string | undefined): boolean =>
 	c === " " || c === "\t" || c === "\n" || c === "\r";
 
@@ -38,5 +40,5 @@ export const hasUseBrowserDirective = (src: string): boolean => {
 	if (quote !== '"' && quote !== "'") return false;
 	const end = src.indexOf(quote, i + 1);
 	if (end === -1) return false;
-	return src.slice(i + 1, end) === "use browser";
+	return src.slice(i + 1, end) === USE_BROWSER_DIRECTIVE;
 };

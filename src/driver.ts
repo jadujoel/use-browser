@@ -1,3 +1,5 @@
+import { ENV } from "./constants";
+
 export type ConsoleHandler = (type: string, ...args: unknown[]) => void;
 export type Backend = "webkit" | "chrome";
 
@@ -156,8 +158,8 @@ const parseBackend = (raw: string | undefined): Backend | undefined => {
  */
 export const getSharedDriver = (): WebViewDriver => {
 	if (sharedDriver === undefined) {
-		const size = parseSize(process.env.BTR_POOL_SIZE);
-		const backend = parseBackend(process.env.BTR_BACKEND);
+		const size = parseSize(process.env[ENV.POOL_SIZE]);
+		const backend = parseBackend(process.env[ENV.BACKEND]);
 		const opts: { maxSize?: number; backend?: Backend } = {};
 		if (size !== undefined) opts.maxSize = size;
 		if (backend !== undefined) opts.backend = backend;

@@ -1,3 +1,4 @@
+import { DEFAULT_CONSOLE_DEPTH, ENV } from "./constants";
 import { bunTestPlugin } from "./plugin";
 
 export interface BuildBundleOptions {
@@ -15,8 +16,6 @@ export interface BuildHtmlPageOptions extends BuildBundleOptions {
 	readonly consoleDepth?: number;
 }
 
-const DEFAULT_CONSOLE_DEPTH = 3;
-
 const parseDepthEnv = (raw: string | undefined): number | undefined => {
 	if (raw === undefined) return undefined;
 	const n = Number(raw);
@@ -26,7 +25,7 @@ const parseDepthEnv = (raw: string | undefined): number | undefined => {
 
 const resolveConsoleDepth = (override: number | undefined): number => {
 	if (override !== undefined && override >= 0) return Math.floor(override);
-	return parseDepthEnv(process.env.BTR_CONSOLE_DEPTH) ?? DEFAULT_CONSOLE_DEPTH;
+	return parseDepthEnv(process.env[ENV.CONSOLE_DEPTH]) ?? DEFAULT_CONSOLE_DEPTH;
 };
 
 const RUNTIME_ENTRY = new URL("./browser/runtime-entry.ts", import.meta.url)

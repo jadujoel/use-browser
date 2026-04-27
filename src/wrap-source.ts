@@ -1,3 +1,5 @@
+import { MODULE_BUN_TEST } from "./constants";
+
 const RUNNER_PATH = new URL("./runner.ts", import.meta.url).pathname;
 const REPLAY_PATH = new URL("./replay.ts", import.meta.url).pathname;
 
@@ -19,7 +21,7 @@ export const wrapAsHostTest = (userFile: string): string => {
 	const runnerLiteral = JSON.stringify(RUNNER_PATH);
 	const replayLiteral = JSON.stringify(REPLAY_PATH);
 	return [
-		`import { describe, test } from "bun:test";`,
+		`import { describe, test } from ${JSON.stringify(MODULE_BUN_TEST)};`,
 		`import { runUserFileWithDriver } from ${runnerLiteral};`,
 		`import { resultToError } from ${replayLiteral};`,
 		``,

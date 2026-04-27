@@ -1,28 +1,53 @@
 {
 	"name": "use-browser",
-	"module": "index.ts",
-	"type": "module",
 	"version": "0.0.6",
+	"description": "Run bun:test files inside a real headless browser by adding a single \"use browser\" directive — zero external browser-automation dependencies.",
+	"keywords": [
+		"bun",
+		"bun-test",
+		"browser",
+		"webview",
+		"testing",
+		"vitest-browser",
+		"playwright-alternative",
+		"use-browser",
+		"directive",
+		"webkit",
+		"chrome"
+	],
+	"license": "MIT",
+	"type": "module",
 	"exports": {
 		".": "./index.ts",
 		"./preload": "./src/preload.ts"
 	},
+	"files": [
+		"index.ts",
+		"src/**/*.ts",
+		"!src/**/*.test.ts",
+		"README.md",
+		"LICENSE"
+	],
 	"publishConfig": {
 		"access": "public"
 	},
 	"repository": {
+		"type": "git",
 		"url": "https://github.com/jadujoel/use-browser"
 	},
 	"scripts": {
 		"test": "bun test",
 		"typecheck": "tsc --noEmit",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
 		"example": "bun test example/"
 	},
 	"devDependencies": {
-		"@types/bun": "latest",
-		"@biomejs/biome": "2.4.13"
+		"@biomejs/biome": "2.4.13",
+		"@types/bun": "latest"
 	},
 	"peerDependencies": {
-		"typescript": "^6"
+		"typescript": "^5.0.0"
 	}
 }

@@ -18,9 +18,14 @@ export interface RunResult {
 }
 
 /**
- * Bundle the user file with the `bun:test` shim, drive a `Bun.WebView`,
- * and surface results back to the host through both `evaluate()` and the
- * `__BTR__:` console sentinel.
+ * Phase 2 / test-only entry point.
+ *
+ * `runUserFileWithDriver` (in `./runner.ts`) is the production code path used
+ * by `wrap-source.ts` — it leases a pooled WebView, takes screenshots on
+ * failure, and forwards console output. This function exists purely so the
+ * Phase 2 e2e tests can assert that both reporting channels (the
+ * `evaluate()` return value and the `__BTR__:` console sentinel) carry the
+ * same results. Do not use it from production code.
  *
  * @throws {Error} If the build fails or the WebView cannot navigate.
  */

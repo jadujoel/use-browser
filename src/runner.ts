@@ -1,4 +1,5 @@
 import { buildHtmlPage } from "./build";
+import { ENV } from "./constants";
 import {
 	type ConsoleHandler,
 	getSharedDriver,
@@ -17,9 +18,10 @@ import {
  * lines used by the in-browser harness to ship results back to the host are
  * filtered out so they don't pollute the report.
  */
-const isConsoleForwardingEnabled = (): boolean =>
-	process.env.BTR_FORWARD_CONSOLE === "1" ||
-	process.env.BTR_FORWARD_CONSOLE === "true";
+const isConsoleForwardingEnabled = (): boolean => {
+	const raw = process.env[ENV.FORWARD_CONSOLE];
+	return raw === "1" || raw === "true";
+};
 
 const forwardingConsoleHandler: ConsoleHandler = (type, ...args) => {
 	const [first] = args;

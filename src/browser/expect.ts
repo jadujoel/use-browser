@@ -1,4 +1,5 @@
 import { deepEqual } from "./deep-equal";
+import { safeStringify } from "./safe-stringify";
 
 export class AssertionError extends Error {
 	override readonly name = "AssertionError";
@@ -18,28 +19,6 @@ export class AssertionError extends Error {
 		this.expected = expected;
 	}
 }
-
-const stringify = (v: unknown): string => {
-	if (typeof v === "function") return `[Function ${v.name || "anonymous"}]`;
-	if (typeof v === "symbol") return v.toString();
-	if (typeof v === "bigint") return `${v.toString()}n`;
-	if (typeof v === "string") return JSON.stringify(v);
-	try {
-		const seen = new WeakSet();
-		return (
-			JSON.stringify(v, (_k, val) => {
-				if (typeof val === "object" && val !== null) {
-					if (seen.has(val as object)) return "[Circular]";
-					seen.add(val as object);
-				}
-				if (typeof val === "bigint") return `${val.toString()}n`;
-				return val as unknown;
-			}) ?? String(v)
-		);
-	} catch {
-		return String(v);
-	}
-};
 
 interface CoreMatchers {
 	toBe(expected: unknown): void;
@@ -89,7 +68,7 @@ const check = (
 
 const matchersFor = (actual: unknown, negated: boolean): Matchers => {
 	const not = negated ? "not " : "";
-	const fmt = stringify;
+	const fmt = safeStringify;
 
 	const base: CoreMatchers = {
 		toBe: (expected) => {

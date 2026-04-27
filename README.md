@@ -58,3 +58,35 @@ That's it — `document`, `window`, CSSOM, `requestAnimationFrame`, and the rest
 ## More examples
 
 See [example/](./example/) for a counter test, a DOM/platform-API test, and a host-side test sitting side by side.
+
+## Environment variables
+
+All knobs are read from `process.env` on the host side. Set them when invoking
+`bun test`:
+
+| Variable | Default | Description |
+|---|---|---|
+| `BTR_FORWARD_CONSOLE` | _off_ | When `1` or `true`, browser-side `console.*` output is piped to the host process so logs show up in `bun test`. Internal `__BTR__:` sentinel lines are filtered out. |
+| `BTR_POOL_SIZE` | `1` | Maximum number of `Bun.WebView` instances kept warm across files. Increasing trades memory for parallelism — the pool is reused across leases for per-file isolation via fresh navigations. |
+| `BTR_BACKEND` | `webkit` on macOS, `chrome` elsewhere | Force a specific backend (`webkit` or `chrome`). |
+| `BTR_CONSOLE_DEPTH` | `3` | Max nesting depth used when the in-browser console patch snapshots host objects (AudioContext, DOM nodes, …) for forwarded `console.*` output. |
+
+## Programmatic API
+
+Most users only need the preload. For tooling that wants to drive the runner
+directly:
+
+```ts
+import {
+  WebViewDriver,
+  runUserFileWithDriver,
+  resultToError,
+} from "use-browser";
+
+const driver = WebViewDriver.from({ maxSize: 2 });
+const { results } = await runUserFileWithDriver({
+  userFile: "/abs/path/to/some.test.ts",
+  driver,
+});
+driver.close();
+```
