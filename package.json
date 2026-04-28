@@ -1,6 +1,6 @@
 {
 	"name": "use-browser",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "Run bun:test files inside a real headless browser by adding a single \"use browser\" directive — zero external browser-automation dependencies.",
 	"keywords": [
 		"bun",
