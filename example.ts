@@ -43,7 +43,6 @@ export async function main() {
 			const hello = await options.rf("hello.txt");
 			console.log("Read back from hello.txt:", hello);
 
-
 			return {
 				currentTime: ctx.currentTime,
 				frequency: osc.frequency.value,
