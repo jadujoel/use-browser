@@ -57,7 +57,7 @@ That's it — `document`, `window`, CSSOM, `requestAnimationFrame`, and the rest
 
 ## More examples
 
-See [example/](./example/) for a counter test, a DOM/platform-API test, and a host-side test sitting side by side.
+See [example/](./example/) for a counter test, a DOM/platform-API test, a Web Audio test, and a host-side test sitting side by side.
 
 ## Environment variables
 
@@ -73,8 +73,69 @@ All knobs are read from `process.env` on the host side. Set them when invoking
 
 ## Programmatic API
 
-Most users only need the preload. For tooling that wants to drive the runner
-directly:
+### `useBrowser()` — run a function in a real browser
+
+For driving a browser from a regular script (not a test file), `useBrowser`
+ships a self-contained function into a `Bun.WebView` and returns its result
+to the host:
+
+```ts
+import { useBrowser } from "use-browser";
+
+const result = await useBrowser({
+  main: async () => {
+    const ctx = new AudioContext({ sampleRate: 48_000 });
+    const osc = ctx.createOscillator();
+    osc.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 1);
+    return { sampleRate: ctx.sampleRate };
+  },
+});
+```
+
+Closure variables are **not** captured — `main` is serialized via
+`Function#toString` and re-evaluated inside the page. Pass anything it needs
+through `parameters`:
+
+```ts
+await useBrowser({
+  main: async (opts: { read: (p: string) => Promise<string> }) => {
+    const txt = await opts.read("README.md");
+    document.body.textContent = txt;
+    return txt.length;
+  },
+  parameters: [
+    { read: async (p: string) => await Bun.file(p).text() },
+  ],
+});
+```
+
+Boundary encoding:
+
+- JSON-safe values pass through unchanged.
+- **Functions** become callable proxies inside the browser — invoking them
+  round-trips back to the host, where the original function runs (async is
+  awaited) and its return value is shipped back.
+- **`Uint8Array` / `Buffer` / `ArrayBuffer`** cross as base64 and are
+  reconstituted as `Uint8Array` on the other side.
+- Cyclic graphs are not supported.
+
+Options:
+
+| Option | Default | Description |
+|---|---|---|
+| `main` | _required_ | Self-contained function evaluated inside the page. |
+| `parameters` | `[]` | Arguments passed to `main`. Encoded as described above. |
+| `backend` | `webkit` on macOS, `chrome` elsewhere | Force a specific backend. |
+| `forwardConsole` | `true` | Pipe browser-side `console.*` to the host. |
+
+See [example.ts](./example.ts) for a fuller walk-through (oscillator playback
+plus host-side `Bun.file` read/write callbacks).
+
+### Driving the test runner directly
+
+For tooling that wants to drive the test runner instead of using the preload:
 
 ```ts
 import {
